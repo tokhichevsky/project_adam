@@ -35,7 +35,7 @@ class Command:
             self.__do(bot, bot_state, message, database, ydisk)
         else:
             bot.send_message(message.chat.id, "Данная команда вам не доступна!")
-    
+
     def stop(self, message: Message):
         if self.tools is not None:
             self.tools["bot_state"].add_state(message.chat.id, "help")

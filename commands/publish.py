@@ -9,14 +9,15 @@ from database import DataBase
 from yandexdisk import YandexDisk
 
 
-def send_photos(bot: TeleBot, database: DataBase, ydisk: YandexDisk):
-    photos = database.get_random_photos(10, "checked")
+def send_photos(bot: TeleBot, database: DataBase, ydisk: YandexDisk, num: int = 10):
+    photos = database.get_random_photos(num, "checked")
     if len(photos) > 0:
         for photo in photos:
             if ydisk.disk.exists(photo["filepath"]):
                 bot.send_photo(os.environ["CHANNEL"], ydisk.disk.get_download_link(photo["filepath"]),
                                disable_notification=True)
                 database.set_photo_status(photo["hash"], "published")
+        print("Publishing complete")
     else:
         print("The photos are over")
 
@@ -29,6 +30,7 @@ def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, 
                 bot.send_photo(os.environ["CHANNEL"], ydisk.disk.get_download_link(photo["filepath"]),
                                disable_notification=True)
                 database.set_photo_status(photo["hash"], "published")
+        bot.send_message(message.chat.id, "Фотографии успешно опубликованы.")
     else:
         bot.send_message(message.chat.id, "Фотографии закончились :(")
 

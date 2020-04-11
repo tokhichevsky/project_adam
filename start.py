@@ -7,6 +7,8 @@ from availablecommands import commands
 from botstate import BotState
 from database import DataBase
 from yandexdisk import YandexDisk
+from mthreading import mult_threading
+import sched, time
 
 database = DataBase()
 # print(database.set_admin("olynkascheeva"))
@@ -14,9 +16,10 @@ ydisk = YandexDisk(token=os.environ["YADISKTOKEN"])
 bot = telebot.TeleBot(os.environ['TOKEN'])
 bot_state = BotState(saved_commands=commands.get_na_commands())
 
+# @mult_threading
+# def time_publish():
 
-#
-#
+
 @bot.message_handler(content_types=["text"])
 def answer_commands(message):
     try:
@@ -32,6 +35,7 @@ def answer_commands(message):
             bot.send_message(message.chat.id, "Не понимаю Вас, воспользуйтесь /help, чтобы выбрать команду.")
     except Exception as e:
         bot.send_message(message.chat.id, "Произошла ошибка.\n"+str(e))
+        print(e)
         bot.send_message(message.chat.id, "Воспользуйтесь /help, чтобы выбрать команду.")
 
 

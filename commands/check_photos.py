@@ -40,7 +40,7 @@ def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, 
 
 
 def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
-    state_additional = bot_state.get_state(message.chat.id)
+    state_additional = bot_state.get_state(message.chat.id)["additional"]
     last_photo = state_additional["last_photo"]
     # state_additional["penult_photo"] =
     if message.text == "Подтвердить":
