@@ -152,7 +152,7 @@ class DataBase:
     def set_photo_status(self, hash: str, status: str, checked_by: int):
         if status in ["unchecked", "checked", "published"]:
             try:
-                self.cursor.execute("UPDATE files SET status = {}, checked_by = {} WHERE hash = '{}'".format(status, checked_by, hash))
+                self.cursor.execute("UPDATE files SET status = '{}', checked_by = {} WHERE hash = '{}'".format(status, checked_by, hash))
                 self.connection.commit()
             except Exception as e:
                 self.connection.rollback()
