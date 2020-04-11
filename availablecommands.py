@@ -116,7 +116,8 @@ commands = CommandList(start_command,
                        #         need_answer=True, echo=answer_addword),
                        # Command("addwordsfromfile", "Добавить слова из файла", do=do_addwordsfromfile,
                        #         is_admin_command=True, need_answer=True, echo=answer_addwordsfromfile),
-                       check_photos_command,
+                       publish_command,
+                       execute_command
                        # Command("exercise", "Начать тест на ударения", do=do_exercise, need_answer=True,
                        #         echo=answer_exercise)
                        )

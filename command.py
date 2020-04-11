@@ -18,9 +18,15 @@ class Command:
         self.is_admin_command = is_admin_command
         self.need_answer = need_answer
         self.end = end
+        self.tools = None
 
     def do(self, bot: TeleBot, bot_state, message: Message, database: DataBase, ydisk: YandexDisk):
-
+        self.tools = {
+            "bot": bot,
+            "bot_state": bot_state,
+            "database": database,
+            "ydisk": ydisk
+        }
         if (not self.is_admin_command) or (self.is_admin_command and database.is_admin(message.from_user.id)):
             last_state = bot_state.get_state(message.chat.id)
             if last_state is not None and last_state["command"].end is not None:
@@ -29,7 +35,10 @@ class Command:
             self.__do(bot, bot_state, message, database, ydisk)
         else:
             bot.send_message(message.chat.id, "Данная команда вам не доступна!")
-
+    
+    def stop(self, message: Message):
+        if self.tools is not None:
+            self.tools["bot_state"].add_state(message.chat.id, "help")
 
 class CommandList:
     def __init__(self, *args):

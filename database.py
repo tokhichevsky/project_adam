@@ -149,10 +149,16 @@ class DataBase:
         return [{"hash": row[0], "status": row[1], "filepath": row[2], "source": row[3], "checked_by": row[4]} for row
                 in answer]
 
-    def set_photo_status(self, hash: str, status: str, checked_by: int):
+    def set_photo_status(self, hash: str, status: str, checked_by: int = None):
         if status in ["deleted", "unchecked", "checked", "published"]:
             try:
-                self.cursor.execute("UPDATE files SET status = '{}', checked_by = {} WHERE hash = '{}'".format(status, checked_by, hash))
+                if checked_by is None:
+                    self.cursor.execute(
+                        "UPDATE files SET status = '{}' WHERE hash = '{}'".format(status, hash))
+                else:
+                    self.cursor.execute(
+                        "UPDATE files SET status = '{}', checked_by = {} WHERE hash = '{}'".format(status, checked_by,
+                                                                                                   hash))
                 self.connection.commit()
             except Exception as e:
                 self.connection.rollback()
@@ -166,7 +172,6 @@ class DataBase:
         except Exception as e:
             self.connection.rollback()
             return e
-
 
     def get_image_info(self, hash: str):
         self.cursor.execute(
@@ -200,15 +205,14 @@ class DataBase:
     def delete_last_rows(self, table: str = "files", num: int = 1000, key_field: str = "hash"):
         try:
             self.cursor.execute(
-                "DELETE FROM {0} WHERE {1} IN (SELECT {1} FROM {0} ORDER BY {1} DESC LIMIT {2})".format(table, key_field,
-                                                                                                       num))
+                "DELETE FROM {0} WHERE {1} IN (SELECT {1} FROM {0} ORDER BY {1} DESC LIMIT {2})".format(table,
+                                                                                                        key_field,
+                                                                                                        num))
             self.connection.commit()
             print("Из таблицы {} успешно удалено {} записей".format(table, num))
         except Exception as e:
             self.connection.rollback()
             print(e)
-
-
 
     def execute(self, sql: str):
         try:

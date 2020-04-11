@@ -11,7 +11,7 @@ def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, 
     bot.send_message(message.chat.id, "Введите логин пользователя")
 
 
-def echo(bot: TeleBot, message: Message, state_additional, database: DataBase, ydisk: YandexDisk):
+def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     result = database.set_admin(message.text)
     bot.send_message(message.chat.id, result)
 
