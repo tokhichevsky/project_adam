@@ -143,8 +143,8 @@ class DataBase:
         return [{"hash": row[0], "status": row[1], "filepath": row[2], "source": row[3], "checked_by": row[4]} for row
                 in answer]
 
-    def get_photos_for_deleting(self):
-        self.cursor.execute("SELECT * FROM files WHERE status = 'deleted';")
+    def get_photos_for_deleting(self, telegram_id: int):
+        self.cursor.execute("SELECT * FROM files WHERE status = 'deleted' AND checked_by = {};".format(telegram_id))
         answer = self.cursor.fetchall()
         return [{"hash": row[0], "status": row[1], "filepath": row[2], "source": row[3], "checked_by": row[4]} for row
                 in answer]
@@ -160,7 +160,7 @@ class DataBase:
 
     def delete_photo(self, hash: str):
         try:
-            self.cursor.execute("DELETE FROM files WHERE hash = {}".format(hash))
+            self.cursor.execute("DELETE FROM files WHERE hash = '{}'".format(hash))
             self.connection.commit()
             return "Изображение успешно удалено."
         except Exception as e:

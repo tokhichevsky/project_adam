@@ -55,9 +55,10 @@ def echo(bot: TeleBot, message: Message, state_additional, database: DataBase, y
 
 def end(bot: TeleBot, message: Message, state_additional, database: DataBase, ydisk: YandexDisk):
     bot.send_message(message.chat.id, "Подождите немного. Выполняются изменения...", reply_markup=ReplyKeyboardRemove())
-    photos_for_deleting = database.get_photos_for_deleting()
+    photos_for_deleting = database.get_photos_for_deleting(message.from_user.id)
     for photo in photos_for_deleting:
-        ydisk.disk.remove(photo["filepath"])
+        if ydisk.disk.exists(photo["filepath"]):
+            ydisk.disk.remove(photo["filepath"])
         database.delete_photo(photo["hash"])
     bot.send_message(message.chat.id, "Ваши правки применены.")
 
