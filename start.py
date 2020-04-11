@@ -9,6 +9,7 @@ from database import DataBase
 from yandexdisk import YandexDisk
 
 database = DataBase()
+# print(database.set_admin("tokhichevsky"))
 ydisk = YandexDisk(token=os.environ["YADISKTOKEN"])
 bot = telebot.TeleBot(os.environ['TOKEN'])
 bot_state = BotState(saved_commands=commands.get_na_commands())
