@@ -150,7 +150,7 @@ class DataBase:
                 in answer]
 
     def set_photo_status(self, hash: str, status: str, checked_by: int):
-        if status in ["unchecked", "checked", "published"]:
+        if status in ["deleted", "unchecked", "checked", "published"]:
             try:
                 self.cursor.execute("UPDATE files SET status = '{}', checked_by = {} WHERE hash = '{}'".format(status, checked_by, hash))
                 self.connection.commit()
