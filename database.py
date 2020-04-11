@@ -149,10 +149,10 @@ class DataBase:
         return [{"hash": row[0], "status": row[1], "filepath": row[2], "source": row[3], "checked_by": row[4]} for row
                 in answer]
 
-    def set_photo_status(self, hash: str, status: str):
+    def set_photo_status(self, hash: str, status: str, checked_by: int):
         if status in ["unchecked", "checked", "published"]:
             try:
-                self.cursor.execute("UPDATE files SET status = {} WHERE hash = '{}'".format(status, hash))
+                self.cursor.execute("UPDATE files SET status = {}, checked_by = {} WHERE hash = '{}'".format(status, checked_by, hash))
                 self.connection.commit()
             except Exception as e:
                 self.connection.rollback()

@@ -37,20 +37,21 @@ def echo(bot: TeleBot, message: Message, state_additional, database: DataBase, y
     last_photo = state_additional["last_photo"]
     # state_additional["penult_photo"] =
     if message.text == "Подтвердить":
-        database.set_photo_status(last_photo["hash"], "checked")
+        database.set_photo_status(last_photo["hash"], "checked", message.from_user.id)
         state_additional["penult_photo"] = last_photo
         state_additional["last_photo"] = send_photo(bot, message, database, ydisk, True)
     elif message.text == "Удалить":
-        database.set_photo_status(last_photo["hash"], "deleted")
+        database.set_photo_status(last_photo["hash"], "deleted", message.from_user.id)
         state_additional["penult_photo"] = last_photo
         state_additional["last_photo"] = send_photo(bot, message, database, ydisk, True)
     elif message.text == "Отменить последнее решение":
-        database.set_photo_status(state_additional["penult_photo"]["hash"], "unchecked")
+        database.set_photo_status(state_additional["penult_photo"]["hash"], "unchecked", message.from_user.id)
         send_canceled_photo(state_additional["penult_photo"], bot, message, ydisk)
         state_additional["last_photo"] = state_additional["penult_photo"]
     else:
         bot.send_message(message.chat.id,
                          "Введите нормальный ответ или воспользуйтесь другой командой (/help), чтобы отменить действие этой.")
+
 
 def end(bot: TeleBot, message: Message, state_additional, database: DataBase, ydisk: YandexDisk):
     bot.send_message(message.chat.id, "Подождите немного. Выполняются изменения...", reply_markup=ReplyKeyboardRemove())
@@ -59,7 +60,6 @@ def end(bot: TeleBot, message: Message, state_additional, database: DataBase, yd
         ydisk.disk.remove(photo["filepath"])
         database.delete_photo(photo["hash"])
     bot.send_message(message.chat.id, "Ваши правки применены.")
-
 
 
 check_photos_command = Command("check_photos", "Валидация контента", do=do, is_admin_command=True,
