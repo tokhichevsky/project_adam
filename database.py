@@ -132,7 +132,9 @@ class DataBase:
 
         self.cursor.execute("SELECT COUNT(*) FROM files WHERE status = %s;", (status,))
         records_num = self.cursor.fetchone()[0]
-        random_records = random.shuffle(list(range(0, records_num + 1)))[:num]
+        random_records = list(range(0, records_num + 1))
+        random.shuffle(random_records)
+        random_records = random_records[:num]
         sql = ' UNION '.join(
             ["(SELECT * FROM files WHERE status = '{}' LIMIT 1 OFFSET {})".format(status, record) for record in
              random_records])
