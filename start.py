@@ -8,16 +8,17 @@ from botstate import BotState
 from database import DataBase
 from yandexdisk import YandexDisk
 from mthreading import mult_threading
-import sched, time
+import schedule
+from commands.publish import send_photos
 
 database = DataBase()
-# print(database.set_admin("olynkascheeva"))
 ydisk = YandexDisk(token=os.environ["YADISKTOKEN"])
 bot = telebot.TeleBot(os.environ['TOKEN'])
 bot_state = BotState(saved_commands=commands.get_na_commands())
 
-# @mult_threading
-# def time_publish():
+@mult_threading
+def time_publish():
+    schedule.every().day.at("20:00").do(send_photos, bot, database, ydisk, 10)
 
 
 @bot.message_handler(content_types=["text"])
@@ -42,4 +43,5 @@ def answer_commands(message):
 
 
 if __name__ == '__main__':
+    time_publish()
     bot.polling()

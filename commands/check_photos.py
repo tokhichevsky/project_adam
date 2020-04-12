@@ -37,30 +37,33 @@ def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, 
     photo = send_photo(bot, bot_state, message, database, ydisk)
     state_additional = bot_state.get_state(message.chat.id)["additional"]
     state_additional["last_photo"] = photo
+    state_additional["need_continue"] = True
 
 
 def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     state_additional = bot_state.get_state(message.chat.id)["additional"]
-    last_photo = state_additional["last_photo"]
-    # state_additional["penult_photo"] =
-    if message.text == "Подтвердить":
-        database.set_photo_status(last_photo["hash"], "checked", message.from_user.id)
-        state_additional["penult_photo"] = last_photo
-        state_additional["last_photo"] = send_photo(bot, bot_state, message, database, ydisk, True)
-    elif message.text == "Удалить":
-        database.set_photo_status(last_photo["hash"], "deleted", message.from_user.id)
-        state_additional["penult_photo"] = last_photo
-        state_additional["last_photo"] = send_photo(bot, bot_state, message, database, ydisk, True)
-    elif message.text == "Отменить последнее решение":
-        database.set_photo_status(state_additional["penult_photo"]["hash"], "unchecked", message.from_user.id)
-        send_canceled_photo(state_additional["penult_photo"], bot, message, ydisk)
-        state_additional["last_photo"] = state_additional["penult_photo"]
-    else:
-        bot.send_message(message.chat.id,
-                         "Введите нормальный ответ или воспользуйтесь другой командой (/help), чтобы отменить действие этой.")
+    if (state_additional["need_continue"]):
+        last_photo = state_additional["last_photo"]
+        # state_additional["penult_photo"] =
+        if message.text == "Подтвердить":
+            database.set_photo_status(last_photo["hash"], "checked", message.from_user.id)
+            state_additional["penult_photo"] = last_photo
+            state_additional["last_photo"] = send_photo(bot, bot_state, message, database, ydisk, True)
+        elif message.text == "Удалить":
+            database.set_photo_status(last_photo["hash"], "deleted", message.from_user.id)
+            state_additional["penult_photo"] = last_photo
+            state_additional["last_photo"] = send_photo(bot, bot_state, message, database, ydisk, True)
+        elif message.text == "Отменить последнее решение":
+            database.set_photo_status(state_additional["penult_photo"]["hash"], "unchecked", message.from_user.id)
+            send_canceled_photo(state_additional["penult_photo"], bot, message, ydisk)
+            state_additional["last_photo"] = state_additional["penult_photo"]
+        else:
+            bot.send_message(message.chat.id,
+                             "Введите нормальный ответ или воспользуйтесь другой командой (/help), чтобы отменить действие этой.")
 
 
-def end(bot: TeleBot, message: Message, state_additional, database: DataBase, ydisk: YandexDisk):
+def end(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
+    bot_state.get_state(message.chat.id)["additional"]["need_continue"] = False
     bot.send_message(message.chat.id, "Подождите немного. Выполняются изменения...", reply_markup=ReplyKeyboardRemove())
     photos_for_deleting = database.get_photos_for_deleting(message.from_user.id)
     for photo in photos_for_deleting:

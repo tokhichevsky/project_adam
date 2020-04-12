@@ -30,7 +30,8 @@ class Command:
         if (not self.is_admin_command) or (self.is_admin_command and database.is_admin(message.from_user.id)):
             last_state = bot_state.get_state(message.chat.id)
             if last_state is not None and last_state["command"].end is not None:
-                last_state["command"].end(bot, message, last_state["additional"], database, ydisk)
+                last_command = last_state["command"]
+                last_command.end(bot, bot_state, message, database, ydisk)
             bot_state.add_state(message.chat.id, self.command)
             self.__do(bot, bot_state, message, database, ydisk)
         else:
