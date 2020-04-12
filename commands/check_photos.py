@@ -5,14 +5,15 @@ from botstate import BotState
 from command import Command
 from database import DataBase
 from yandexdisk import YandexDisk
-from commands import start_command
 
 
 def send_photo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk, is_canceled: bool = False):
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.row("Подтвердить", "Удалить")
+    state_additional = bot_state.get_state(message.chat.id)["additional"]
+    keyboard = None
     if is_canceled:
-        keyboard.row("Отменить последнее решение")
+        keyboard = state_additional["keyboard"]["with_cancel"]
+    else:
+        keyboard = state_additional["keyboard"]["normal"]
     photo = database.get_random_photos(1)
     if len(photo) > 0:
         photo = photo[0]
@@ -24,9 +25,9 @@ def send_photo(bot: TeleBot, bot_state: BotState, message: Message, database: Da
     return photo
 
 
-def send_canceled_photo(photo, bot: TeleBot, message: Message, ydisk: YandexDisk):
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.row("Подтвердить", "Удалить")
+def send_canceled_photo(photo, bot: TeleBot, bot_state: BotState, message: Message, ydisk: YandexDisk):
+    state_additional = bot_state.get_state(message.chat.id)["additional"]
+    keyboard = state_additional["keyboard"]["normal"]
     photo_url = ydisk.disk.get_download_link(photo["filepath"])
     bot.send_photo(message.chat.id, photo_url, reply_markup=keyboard)
 
@@ -34,9 +35,18 @@ def send_canceled_photo(photo, bot: TeleBot, message: Message, ydisk: YandexDisk
 def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     bot.send_message(message.chat.id,
                      "Начата проверка фотографий. Чтобы закончить проверку, введите любую другую команду (/help).")
-    photo = send_photo(bot, bot_state, message, database, ydisk)
     state_additional = bot_state.get_state(message.chat.id)["additional"]
+
+    keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard1.row("Подтвердить", "Удалить")
+    keyboard1.row("Отменить последнее решение")
+    keyboard2 = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard2.row("Подтвердить", "Удалить")
+    state_additional["keyboard"] = {"with_cancel": keyboard1, "normal": keyboard2}
+    photo = send_photo(bot, bot_state, message, database, ydisk)
+
     state_additional["last_photo"] = photo
+
 
 
 def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
@@ -61,6 +71,9 @@ def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase
 
 
 def end(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
+    state_additional = bot_state.get_state(message.chat.id)["additional"]
+    state_additional["keyboard"]["normal"] = ReplyKeyboardRemove()
+    state_additional["keyboard"]["with_cancel"] = ReplyKeyboardRemove()
     bot.send_message(message.chat.id, "Подождите немного. Выполняются изменения...", reply_markup=ReplyKeyboardRemove())
     photos_for_deleting = database.get_photos_for_deleting(message.from_user.id)
     for photo in photos_for_deleting:

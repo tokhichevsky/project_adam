@@ -41,6 +41,9 @@ class Command:
         if self.tools is not None:
             self.tools["bot_state"].add_state(message.chat.id, "help")
 
+    # def end(self, bot: TeleBot, bot_state, message: Message, database: DataBase, ydisk: YandexDisk):
+
+
 class CommandList:
     def __init__(self, *args):
         self.__commands = []
