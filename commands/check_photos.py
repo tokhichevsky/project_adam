@@ -63,7 +63,7 @@ def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase
         state_additional["last_photo"] = send_photo(bot, bot_state, message, database, ydisk, True)
     elif message.text == "Отменить последнее решение":
         database.set_photo_status(state_additional["penult_photo"]["hash"], "unchecked", message.from_user.id)
-        send_canceled_photo(state_additional["penult_photo"], bot, message, ydisk)
+        send_canceled_photo(state_additional["penult_photo"], bot, bot_state, message, ydisk)
         state_additional["last_photo"] = state_additional["penult_photo"]
     else:
         bot.send_message(message.chat.id,
