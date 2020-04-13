@@ -7,7 +7,7 @@ class BotState:
         self.__saved_commands = saved_commands
         # self.__all_commands = all_commands
 
-    def add_state(self, chat_id: int, command: str, additional: dict = {}):
+    def add_state(self, chat_id: int, command: str, additional: dict = {"is_ends": False}):
         if command in self.__saved_commands:
             self.__states[chat_id] = {"command": self.__saved_commands[command], "additional": additional}
         elif chat_id in self.__states.keys():
