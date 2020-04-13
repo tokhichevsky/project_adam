@@ -28,21 +28,21 @@ def time_publish():
 
 @bot.message_handler(content_types=["text"])
 def answer_commands(message):
-    # try:
-    global bot_state
-    found_command = re.findall(r"^/([A-z]+)", message.text)
-    state = bot_state.get_state(message.from_user.id)
+    try:
+        global bot_state
+        found_command = re.findall(r"^/([A-z]+)", message.text)
+        state = bot_state.get_state(message.from_user.id)
 
-    if len(found_command) > 0 and found_command[0] in commands:
-        commands[found_command[0]].do(bot, bot_state, message, database, ydisk)
-    elif state:
-        state["command"].echo(bot, bot_state, message, database, ydisk)
-    else:
-        bot.send_message(message.chat.id, "Не понимаю Вас, воспользуйтесь /help, чтобы выбрать команду.")
-    # except Exception as e:
-    #     bot.send_message(message.chat.id, "Произошла ошибка.\n"+str(e))
-    #     print(e)
-    #     bot.send_message(message.chat.id, "Воспользуйтесь /help, чтобы выбрать команду.")
+        if len(found_command) > 0 and found_command[0] in commands:
+            commands[found_command[0]].do(bot, bot_state, message, database, ydisk)
+        elif state:
+            state["command"].echo(bot, bot_state, message, database, ydisk)
+        else:
+            bot.send_message(message.chat.id, "Не понимаю Вас, воспользуйтесь /help, чтобы выбрать команду.")
+    except Exception as e:
+        bot.send_message(message.chat.id, "Произошла ошибка.\n"+str(e))
+        print(e)
+        bot.send_message(message.chat.id, "Воспользуйтесь /help, чтобы выбрать команду.")
 
 
 
