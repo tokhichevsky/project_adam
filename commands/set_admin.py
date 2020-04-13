@@ -13,6 +13,7 @@ def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, 
 
 def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     result = database.set_admin(message.text)
+    print("{}: set {} as administrator".format(message.from_user.username, message.text))
     bot.send_message(message.chat.id, result)
 
 

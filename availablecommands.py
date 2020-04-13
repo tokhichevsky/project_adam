@@ -117,7 +117,8 @@ commands = CommandList(start_command,
                        # Command("addwordsfromfile", "Добавить слова из файла", do=do_addwordsfromfile,
                        #         is_admin_command=True, need_answer=True, echo=answer_addwordsfromfile),
                        publish_command,
-                       execute_command
+                       execute_command,
+                       remove_keyboard_command
                        # Command("exercise", "Начать тест на ударения", do=do_exercise, need_answer=True,
                        #         echo=answer_exercise)
                        )

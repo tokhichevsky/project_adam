@@ -164,6 +164,12 @@ class DataBase:
                 self.connection.rollback()
                 print(e)
 
+    def increament_insta_stat(self, username, field):
+        try:
+            self.cursor.execute("UPDATE instagrams SET {0} = {0} + 1 WHERE username = {1}".format(username, field))
+        except Exception as e:
+            print(e)
+
     def delete_photo(self, hash: str):
         try:
             self.cursor.execute("DELETE FROM files WHERE hash = '{}'".format(hash))

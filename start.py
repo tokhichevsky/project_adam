@@ -31,7 +31,7 @@ def answer_commands(message):
     try:
         global bot_state
         found_command = re.findall(r"^/([A-z]+)", message.text)
-        state = bot_state.get_state(message.chat.id)
+        state = bot_state.get_state(message.from_user.id)
 
         if len(found_command) > 0 and found_command[0] in commands:
             commands[found_command[0]].do(bot, bot_state, message, database, ydisk)

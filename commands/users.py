@@ -9,9 +9,10 @@ from yandexdisk import YandexDisk
 
 def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     users = database.get_records("users", ["telegram_id", "username", "is_admin"])
-    text = "{:<10} {:<15} {:<6}".format("telegram_id", "username", "is_admin")
+    text = "{:<12} {:<18} {:<8}".format("telegram_id", "username", "is_admin")
     for user in users:
-        text += "\n{:<10} {:<15} {:<6}".format(user["telegram_id"], user["username"], user["is_admin"])
+        text += "\n{:<12} {:<18} {:<8}".format(user["telegram_id"], user["username"], user["is_admin"])
+    print("{}: requested a list of users".format(message.from_user.username))
     bot.send_message(message.chat.id, text)
 
 

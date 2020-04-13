@@ -17,7 +17,7 @@ class Command:
         self.short_description = short_description
         self.is_admin_command = is_admin_command
         self.need_answer = need_answer
-        self.end = end
+        self.__end = end
         self.tools = None
 
     def do(self, bot: TeleBot, bot_state, message: Message, database: DataBase, ydisk: YandexDisk):
@@ -28,11 +28,16 @@ class Command:
             "ydisk": ydisk
         }
         if (not self.is_admin_command) or (self.is_admin_command and database.is_admin(message.from_user.id)):
-            last_state = bot_state.get_state(message.chat.id)
+            last_state = bot_state.get_state(message.from_user.id)
             if last_state is not None and last_state["command"].end is not None:
                 last_command = last_state["command"]
-                last_command.end(bot, bot_state, message, database, ydisk)
-            bot_state.add_state(message.chat.id, self.command)
+                if not last_state["additional"]["is_ends"]:
+                    last_command.end(bot, bot_state, message, database, ydisk)
+                else:
+                    bot.send_message(message.chat.id, "Дождитесь окончания предыдущей команды!")
+                    return
+            bot_state.add_state(message.from_user.id, self.command)
+
             self.__do(bot, bot_state, message, database, ydisk)
         else:
             bot.send_message(message.chat.id, "Данная команда вам не доступна!")
@@ -41,8 +46,12 @@ class Command:
         if self.tools is not None:
             self.tools["bot_state"].add_state(message.chat.id, "help")
 
-    # def end(self, bot: TeleBot, bot_state, message: Message, database: DataBase, ydisk: YandexDisk):
-
+    def end(self, bot: TeleBot, bot_state, message: Message, database: DataBase, ydisk: YandexDisk):
+        state_additional = bot_state.get_state(message.from_user.id)["additional"]
+        if self.__end is not None:
+            state_additional["is_ends"] = True
+            self.__end(bot, bot_state, message, database, ydisk)
+        state_additional["is_ends"] = False
 
 class CommandList:
     def __init__(self, *args):
