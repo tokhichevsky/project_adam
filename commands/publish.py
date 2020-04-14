@@ -17,7 +17,7 @@ def send_photos(bot: TeleBot, database: DataBase, ydisk: YandexDisk, num: int = 
                 bot.send_photo(os.environ["CHANNEL"], ydisk.disk.get_download_link(photo["filepath"]),
                                disable_notification=True)
                 database.set_photo_status(photo["hash"], "published")
-                database.increament_insta_stat(photo["source"], "approved_photos")
+                database.increment_insta_stat(photo["source"], "approved_photos")
         print("Publishing complete ({})".format(num))
     else:
         print("The photos are over")
