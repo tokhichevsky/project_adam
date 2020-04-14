@@ -80,7 +80,7 @@ def end(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase,
         if ydisk.disk.exists(photo["filepath"]):
             ydisk.disk.remove(photo["filepath"])
         if photo["source"] is not None:
-            database.increament_insta_stat(photo["source"], "unapproved_photos")
+            database.increment_insta_stat(photo["source"], "unapproved_photos")
         database.delete_photo(photo["hash"])
     bot.send_message(message.chat.id, "Ваши правки применены.")
 

@@ -35,7 +35,7 @@ def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase
                 bot.send_photo(os.environ["CHANNEL"], ydisk.disk.get_download_link(photo["filepath"]),
                                disable_notification=True)
                 database.set_photo_status(photo["hash"], "published")
-                database.increament_insta_stat(photo["source"], "approved_photos")
+                database.increment_insta_stat(photo["source"], "approved_photos")
         print("{}: posted photos".format(message.from_user.username))
         bot.send_message(message.chat.id, "Фотографии успешно опубликованы.")
     else:

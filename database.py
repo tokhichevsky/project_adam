@@ -164,10 +164,12 @@ class DataBase:
                 self.connection.rollback()
                 print(e)
 
-    def increament_insta_stat(self, username, field):
+    def increment_insta_stat(self, username, field):
         try:
-            self.cursor.execute("UPDATE instagrams SET {0} = {0} + 1 WHERE username = {1}".format(username, field))
+            self.cursor.execute("UPDATE instagrams SET {0} = {0} + 1 WHERE username = {1}".format(field, username))
+            self.connection.commit()
         except Exception as e:
+            self.connection.rollback()
             print(e)
 
     def delete_photo(self, hash: str):
