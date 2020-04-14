@@ -166,7 +166,7 @@ class DataBase:
 
     def increment_insta_stat(self, username, field):
         try:
-            self.cursor.execute("UPDATE instagrams SET {0} = {0} + 1 WHERE username = {1}".format(field, username))
+            self.cursor.execute("UPDATE instagrams SET {0} = {0} + 1 WHERE username = '{1}'".format(field, username))
             self.connection.commit()
         except Exception as e:
             self.connection.rollback()
