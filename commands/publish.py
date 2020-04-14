@@ -43,4 +43,4 @@ def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase
         bot.send_message(message.chat.id, "Фотографии закончились :(")
 
 
-publish_command = Command("publish", "Опубликовать контент немедленно", do=do, is_admin_command=True)
+publish_command = Command("publish", "Опубликовать контент немедленно", do=do, is_admin_command=True, need_answer=True, echo=echo)
