@@ -20,7 +20,7 @@ bot_state = BotState(saved_commands=commands.get_na_commands())
 @mult_threading
 def time_publish():
     # schedule.every().day.at("20:00").do(send_photos, bot, database, ydisk, 10)
-    schedule.every(2).hours.do(send_photos, bot, database, ydisk, 1)
+    schedule.every().hour.do(send_photos, bot, database, ydisk, 1)
     while True:
         schedule.run_pending()
         time.sleep(1)
