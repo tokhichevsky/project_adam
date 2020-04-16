@@ -35,6 +35,7 @@ def send_canceled_photo(photo, bot: TeleBot, bot_state: BotState, message: Messa
 def do(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
     bot.send_message(message.chat.id,
                      "Начата проверка фотографий. Чтобы закончить проверку, введите любую другую команду (/help).")
+    print("{}: started photo validation".format(message.from_user.username))
     state_additional = bot_state.get_state(message.from_user.id)["additional"]
 
     keyboard1 = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -71,6 +72,7 @@ def echo(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase
 
 
 def end(bot: TeleBot, bot_state: BotState, message: Message, database: DataBase, ydisk: YandexDisk):
+    print("{}: ended photo validation".format(message.from_user.username))
     state_additional = bot_state.get_state(message.from_user.id)["additional"]
     state_additional["keyboard"]["normal"] = ReplyKeyboardRemove()
     state_additional["keyboard"]["with_cancel"] = ReplyKeyboardRemove()
