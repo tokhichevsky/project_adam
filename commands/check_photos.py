@@ -17,11 +17,12 @@ def send_photo(bot: TeleBot, bot_state: BotState, message: Message, database: Da
     photo = database.get_random_photos(1)
     if len(photo) > 0:
         photo = photo[0]
+        photo_url = ydisk.disk.get_download_link(photo["filepath"])
+        bot.send_photo(message.chat.id, photo_url, reply_markup=keyboard, caption="https://www.instagram.com/{}".format(photo["source"]))
     else:
         bot.send_message(message.chat.id, "Фотографии закончились :(\nВведите /help, остановите эту хреновину.")
         bot_state.add_state(message.chat.id, "help")
-    photo_url = ydisk.disk.get_download_link(photo["filepath"])
-    bot.send_photo(message.chat.id, photo_url, reply_markup=keyboard)
+
     return photo
 
 
